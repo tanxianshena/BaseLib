@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/color_00f3b8</color>
+    <color name="colorPrimaryDark">@color/focus_light</color>
+    <color name="colorAccent">#333333</color>
+    <color name="colorTheme">#30232C</color>
+
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#3F51B5</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="color_fff">#ffffff</color>
+    <color name="color_000">#000000</color>
+    <color name="color_666">#666666</color>
+    <color name="color_999">#999999</color>
+    <color name="color_333">#333333</color>
+    <color name="color_ddd">#dddddd</color>
+    <color name="color_f4f4f4">#f4f4f4</color>
+    <color name="color_00f3b8">#00f3b8</color>
+    <color name="color_ff174a">#ff174a</color>
+    <color name="color_f7f7f7">#f7f7f7</color>
+    <color name="transparent">#00000000</color>
+
+
+    <color name="float_1">#666666</color>
+    <color name="float_2">#5baaed</color>
+    <color name="float_3">#58c1a8</color>
+    <color name="float_4">#ff0000</color>
+    <color name="divider">#cac2c2</color>
+    <color name="color_FF666B">#FF666B</color>
+</resources>

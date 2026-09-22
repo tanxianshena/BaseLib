@@ -1,0 +1,10 @@
+<com.tzh.baselib.view.SearchView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    app:sv_text_size="18px"
+    app:sv_corners="7px"
+    app:sv_image_width="20px"
+    app:sv_hint="Original hint"
+    app:sv_input_max_length="3"
+    app:sv_no_input_hint_text="Enter a query" />

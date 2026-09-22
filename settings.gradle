@@ -1,0 +1,3 @@
+rootProject.name = "BaseLib"
+include ':app'
+include ':mylibrary'

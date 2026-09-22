@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--App title bar-->
+    <declare-styleable name="XAppTitleBar">
+        <!--标题文字-->
+        <attr name="xtbTitleText" format="string" />
+        <!--标题文字颜色-->
+        <attr name="xtbTitleTxtColor" format="color" />
+        <!--返回按钮颜色-->
+        <attr name="xtbBackIconColor" format="color" />
+        <!--是否显示返回按钮 默认显示-->
+        <attr name="xtbBackIconIsShow" format="boolean" />
+
+        <attr name="xtbIsWindowTranslucentStatus" format="boolean" />
+
+        <!--右边显示的控件-->
+        <attr name="xtbRightShowView" format="enum">
+            <!--右边不显示-->
+            <enum name="view_NONE" value="0" />
+            <!--右边显示文字-->
+            <enum name="VIEW_TEXT" value="1" />
+            <!--右边显示图片-->
+            <enum name="VIEW_IMAGE" value="2" />
+
+        </attr>
+
+        <!--左边图片资源-->
+        <attr name="xtbLeftImgSrc" format="reference|color" />
+
+        <!--右边文字-->
+        <attr name="xtbRightText" format="string" />
+        <!--右边文字颜色-->
+        <attr name="xtbRightTxtColor" format="color" />
+        <!--右边文字大小-->
+        <attr name="xtbRightTxtSize" format="dimension" />
+        <!--右边文字是否加粗  默认不加粗-->
+        <attr name="xtbRightTxtIsBold" format="boolean" />
+
+        <!--右边图片资源-->
+        <attr name="xtbRightImgSrc" format="reference|color" />
+        <!--右边图片颜色-->
+        <attr name="xtbRightImgColor" format="integer" />
+        <!--左边图片距离左边距离-->
+        <attr name="xtbLeftImgPaddingLeft" format="dimension" />
+        <!--左边图片距离右边距离-->
+        <attr name="xtbLeftImgPaddingRight" format="dimension" />
+        <!--右边图片宽-->
+        <attr name="xtbRightImgWidth" format="dimension" />
+        <!--右边图片高-->
+        <attr name="xtbRightImgHeight" format="dimension" />
+    </declare-styleable>
+
+    <!--BMIView-->
+    <declare-styleable name="BMIView">
+        <!--BMI值-->
+        <attr name="bvBMI" format="float" />
+
+        <!--指针图片资源-->
+        <attr name="bvImgSrc" format="reference|color" />
+
+    </declare-styleable>
+
+    <declare-styleable name="SwipeMenuView">
+        <attr name="swipeEnable" format="boolean" />
+        <attr name="ios" format="boolean" />
+        <attr name="leftSwipe" format="boolean" />
+    </declare-styleable>
+
+
+
+    <declare-styleable name="SearchView">
+        <!--输入框字文字颜色-->
+        <attr name="sv_text_color" format="color" />
+        <!--输入框提示文字颜色-->
+        <attr name="sv_hint_color" format="color" />
+        <!--背景颜色-->
+        <attr name="sv_back_color" format="color" />
+        <!--提示文字-->
+        <attr name="sv_hint" format="string" />
+        <!--限制输入的最大字数-->
+        <attr name="sv_input_max_length" format="integer" />
+        <!--没有输入文字的时候的提示  不设置默认为不拦截-->
+        <attr name="sv_no_input_hint_text" format="string" />
+        <!--超过最大限制的提示文字-->
+        <attr name="sv_input_hint_text" format="string" />
+        <!--背景弧度-->
+        <attr name="sv_corners" format="dimension" />
+        <!--文字大小-->
+        <attr name="sv_text_size" format="dimension" />
+        <!--左右图片的大小  宽高一致-->
+        <attr name="sv_image_width" format="dimension" />
+
+    </declare-styleable>
+
+
+    <declare-styleable name="RatioImageView">
+        <attr name="ratio" format="float"/>
+        <!-- 宽或者高  默认是高 -->
+        <attr name="WidthOrHeight" format="enum">
+            <enum name="Width" value="1"/>
+            <enum name="Height" value="2"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FlowTagView">
+        <attr name="tagSpacing" format="dimension" />
+        <attr name="lineSpacing2" format="dimension" />
+        <!-- 是否是固定布局 -->
+        <attr name="isFixed" format="boolean" />
+        <attr name="columnSize" format="integer" />
+    </declare-styleable>
+
+
+    <declare-styleable name="RingProgressBar">
+        <attr name="ringColor" format="color" />
+        <attr name="ringProgressColor" format="color" />
+        <attr name="ringWidth" format="dimension" />
+        <attr name="ringMax" format="integer" />
+        <attr name="ringTextIsDisplayable" format="boolean" />
+        <attr name="ringStyle">
+            <enum name="STROKE" value="0" />
+            <enum name="FILL" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="RecordView">
+        <!--最大录制秒数-->
+        <attr name="rv_Max_Second" format="integer" />
+        <!--最小录制秒数-->
+        <attr name="rv_Min_Second" format="integer" />
+
+    </declare-styleable>
+
+    <declare-styleable name="SideBar">
+        <attr name="scaleSize" format="integer"/>
+        <attr name="scaleItemCount" format="integer"/>
+        <attr name="scaleWidth" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="SwitchButton">
+        <attr name="unselectedBg" format="color"/>
+        <attr name="selectedBg" format="color"/>
+        <attr name="circle2Bgmargin" format="dimension"/>
+        <attr name="switchState" format="enum">
+            <enum name="open" value="2"/>
+            <enum name="close" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="HorizontalPickerView">
+        <attr name="normalTextColor" format="color" />
+        <attr name="selectedTextColor" format="color" />
+        <attr name="normalTextSize" format="dimension" />
+        <attr name="selectedTextSize" format="dimension" />
+        <attr name="itemWidth" format="dimension" />
+        <attr name="itemHeight" format="dimension" />
+        <!-- 添加循环属性 -->
+        <attr name="isCircular" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="Horizontal2PickerView">
+        <attr name="pv_textColor" format="color|reference"/>
+        <attr name="pv_selectedTextColor" format="color|reference"/>
+        <attr name="pv_textSize" format="dimension"/>
+    </declare-styleable>
+</resources>

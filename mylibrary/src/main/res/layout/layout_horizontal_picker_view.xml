@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.tzh.baselib.shapeview.ShapeLinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:shapeBackgroundColor="#FFF6DE"
+        android:orientation="vertical"
+        android:gravity="center">
+        <com.tzh.baselib.shapeview.ShapeImageView
+            android:layout_width="7dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/icon_vector_1"/>
+        <com.tzh.baselib.view.pickerview.Horizontal2PickerView
+            android:id="@+id/pick_view"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            app:pv_textColor="@color/color_333"
+            app:pv_selectedTextColor="@color/color_ffbc5c"/>
+        <com.tzh.baselib.shapeview.ShapeImageView
+            android:layout_width="7dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/icon_vector_2"/>
+    </com.tzh.baselib.shapeview.ShapeLinearLayout>
+</layout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <com.tzh.baselib.view.title.XAppTitleBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:xtbTitleText="联系人"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.tzh.baselib.util.tool.SideBar
+                android:id="@+id/sidebar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:paddingTop="60dp"
+                android:paddingBottom="60dp"
+                android:paddingEnd="10dp"
+                android:textColor="@color/color_00f3b8"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</layout>

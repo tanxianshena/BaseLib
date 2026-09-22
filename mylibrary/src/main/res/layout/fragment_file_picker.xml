@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?attr/colorPrimary">
+
+            <ImageButton
+                android:id="@+id/btn_up"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ps_ic_back"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+            <TextView
+                android:id="@+id/tv_current_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/btn_up"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textColor="@android:color/white"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="8dp" />
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_files"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="选择文件"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</layout>

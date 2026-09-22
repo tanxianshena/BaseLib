@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="baselib_search_hint">请输入搜索内容</string>
+    <string name="baselib_search_too_long">搜索字数超出%1$d个，请重新输入</string>
+    <string name="baselib_search_clear">清空搜索内容</string>
+</resources>
