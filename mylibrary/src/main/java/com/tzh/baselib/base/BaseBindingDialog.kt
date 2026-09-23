@@ -108,8 +108,8 @@ abstract class BaseBindingDialog<B : ViewDataBinding> @JvmOverloads constructor(
         windowAnim = ANIM_BOTTOM
     }
 
-    /** Bottom-mode downward dismissal, independent of outside touch; disabled by default.
-     * Requires isCancelableDialog. Set before or after show().
+    /**
+     * 是否可以拖动向底部关闭
      */
     var isDragDismissEnabled: Boolean = false
         set(value) {
