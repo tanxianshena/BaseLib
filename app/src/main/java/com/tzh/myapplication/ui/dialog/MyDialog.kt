@@ -9,6 +9,7 @@ import com.tzh.baselib.util.setOnClickNoDouble
 class MyDialog(context : Context) : BaseBindingDialog<DialogMyBinding>(context,R.layout.dialog_my){
     init {
         initBottomDialog()
+        isDragDismissEnabled = true
     }
     override fun initView() {
         binding.tvOk.setOnClickNoDouble {

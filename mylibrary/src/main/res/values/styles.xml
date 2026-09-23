@@ -212,7 +212,7 @@
         <attr name="gv_lock_color" format="color" />
         <attr name="gv_unlock_color" format="color" />
         <attr name="gv_liner_color" format="color" />
-        <attr name="gv_point_radius" format="integer" />
-        <attr name="gv_line_width" format="integer" />
+        <attr name="gv_point_radius" format="dimension|integer" />
+        <attr name="gv_line_width" format="dimension|integer" />
     </declare-styleable>
 </resources>

@@ -2,7 +2,6 @@ package com.tzh.myapplication.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import com.tzh.baselib.util.LogUtils
 import com.tzh.myapplication.R
 import com.tzh.myapplication.base.AppBaseActivity
 import com.tzh.myapplication.databinding.ActivityGestureLockBinding
@@ -18,7 +17,6 @@ class GestureLockActivity : AppBaseActivity<ActivityGestureLockBinding>(R.layout
 
     override fun initView() {
         binding.gestureLockView.setOnGestureLockListener {
-            LogUtils.e("=====",it)
             if (isGestureCorrect(it)) {
                 ToastUtil.show("手势解锁成功")
                 finish()
@@ -34,7 +32,7 @@ class GestureLockActivity : AppBaseActivity<ActivityGestureLockBinding>(R.layout
 
     private fun isGestureCorrect(gesture: String): Boolean {
         // 这里应该与预设的手势进行比较
-        val correctGesture = "360,360;720,360;1080,360;1080,720;1080,1080;"
+        val correctGesture = "1-2-3-6-9"
         return gesture == correctGesture
     }
 }

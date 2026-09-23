@@ -37,8 +37,8 @@
         <com.tzh.baselib.shapeview.ShapeConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_margin="16dp"
-            android:visibility="gone"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
             app:shapeBackgroundColor="@color/color_00f3b8"
             android:onClick="@{()->v.openDialog()}"
             app:shapeCorners="8dp">
