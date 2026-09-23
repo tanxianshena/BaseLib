@@ -1,6 +1,4 @@
 jdk:
   - openjdk17
-before_install:
-  - ln -sf $ANDROID_HOME/platforms/android-37.0 $ANDROID_HOME/platforms/android-37
 install:
-  - ./gradlew clean build publishToMavenLocal -x test -x lint
+  - ./gradlew :mylibrary:clean :mylibrary:publishReleasePublicationToMavenLocal --console=plain

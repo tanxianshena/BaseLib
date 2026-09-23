@@ -1,11 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
     namespace "com.tzh.baselib"
-    compileSdk 37
+    compileSdk 36
 
     defaultConfig {
         minSdk 24
@@ -26,6 +27,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
     }
 
     buildFeatures {
@@ -104,4 +111,18 @@ dependencies {
     api 'com.belerweb:pinyin4j:2.5.1'
 
     api 'androidx.cardview:cardview:1.0.0'
+}
+
+// JitPack supplies GROUP / ARTIFACT / VERSION; -P overrides are useful locally.
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = providers.gradleProperty('group').orElse(providers.environmentVariable('GROUP')).getOrElse('com.github.tanxianshena')
+                artifactId = providers.environmentVariable('ARTIFACT').getOrElse(rootProject.name)
+                version = providers.gradleProperty('version').orElse(providers.environmentVariable('VERSION')).getOrElse('local-SNAPSHOT')
+            }
+        }
+    }
 }
