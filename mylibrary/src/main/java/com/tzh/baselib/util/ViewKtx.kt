@@ -30,7 +30,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.tzh.baselib.adapter.FlyAnimator
 import com.tzh.baselib.divider.GradDivider
 import com.tzh.baselib.divider.XRvVerticalDivider
 

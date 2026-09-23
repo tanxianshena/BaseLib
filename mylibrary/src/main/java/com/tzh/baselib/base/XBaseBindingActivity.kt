@@ -26,6 +26,11 @@ abstract class XBaseBindingActivity<B : ViewDataBinding>(@LayoutRes LayoutId: In
     protected abstract fun initView()
     protected abstract fun initData()
 
+    override fun onResume() {
+        super.onResume()
+        XAppActivityManager.getInstance().markActivityResumed(this)
+    }
+
     override fun onDestroy() {
         XAppActivityManager.getInstance().removeActivity(this)
         super.onDestroy()

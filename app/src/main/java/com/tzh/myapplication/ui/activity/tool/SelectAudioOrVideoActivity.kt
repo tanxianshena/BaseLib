@@ -29,7 +29,8 @@ class SelectAudioOrVideoActivity : AppBaseActivity<ActivitySelectAudioOrVideoBin
          * @param isSingle 是否是单选模式
          */
         fun start(context: Context,type : String,isSingle : Boolean = false){
-            PermissionDetectionUtil.getFilePermission(XAppActivityManager.getInstance().currentActivity(),object : PermissionDetectionUtil.DetectionListener {
+            val activity = XAppActivityManager.getInstance().currentActivity() ?: return
+            PermissionDetectionUtil.getFilePermission(activity,object : PermissionDetectionUtil.DetectionListener {
                 override fun ok() {
                     context.startActivity(Intent(context,SelectAudioOrVideoActivity::class.java).apply {
                         putExtra("type",type)

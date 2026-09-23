@@ -1,225 +1,123 @@
-package com.tzh.baselib.base;
+package com.tzh.baselib.base
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
+import android.os.Looper
+import androidx.annotation.MainThread
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import com.tzh.baselib.R
+import java.lang.ref.WeakReference
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
+/** Tracks explicitly registered activities; the top is the most recently added/resumed one.
+ * All stack operations belong on the main thread. A top activity is not necessarily visible.
+ */
+@MainThread
+class XAppActivityManager private constructor() {
+    private val activities = mutableListOf<WeakReference<AppCompatActivity>>()
 
-import com.tzh.baselib.R;
+    companion object {
+        private val singleton by lazy { XAppActivityManager() }
 
-import java.util.Stack;
+        @JvmStatic
+        fun getInstance(): XAppActivityManager = singleton
 
-public class XAppActivityManager {
-    private static Stack<AppCompatActivity> mActivityStack;
-    private static XAppActivityManager mInstance;
-
-    private XAppActivityManager() {
-        mActivityStack = new Stack<>();
-    }
-
-    public static XAppActivityManager getInstance() {
-        if (mInstance == null) {
-            mInstance = new XAppActivityManager();
+        @JvmStatic
+        fun startActivityRtl(context: Context, intent: Intent) {
+            requireMainThread()
+            var host = context
+            while (host is ContextWrapper && host !is Activity) {
+                val next = host.baseContext
+                if (next === host) break
+                host = next
+            }
+            // Do not mutate the caller's Intent when starting from an application context.
+            val launchIntent = Intent(intent)
+            if (host !is Activity) launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val options = ActivityOptionsCompat.makeCustomAnimation(context,
+                R.anim.activity_slide_right_in, R.anim.activity_slide_left_out)
+            context.startActivity(launchIntent, options.toBundle())
         }
-        return mInstance;
-    }
 
-    /**
-     * 将当前Activity推入栈中
-     *
-     * @param activity Acitivity
-     */
-    public void addActivity(AppCompatActivity activity) {
-        if (mActivityStack == null) {
-            mActivityStack = new Stack<>();
-        }
-        mActivityStack.add(activity);
-    }
-
-    /**
-     * 获得当前栈顶Activity
-     *
-     * @return 当前栈顶Activity
-     */
-    public AppCompatActivity currentActivity() {
-        AppCompatActivity activity = null;
-        if (null != mActivityStack) {
-            if (!mActivityStack.empty()) {
-                activity = mActivityStack.lastElement();
+        private fun requireMainThread() {
+            check(Looper.myLooper() == Looper.getMainLooper()) {
+                "Activity management must run on the main thread"
             }
         }
-        return activity;
     }
 
-
-    /**
-     * 销毁单个activity
-     *
-     * @param activity 需要销毁的Activity
-     */
-    public void finishActivity(AppCompatActivity activity) {
-        if (activity != null) {
-            // 在从自定义集合中取出当前Activity时，也进行了Activity的关闭操
-            mActivityStack.remove(activity);
-            activity.finish();
-            activity = null;
-        }
-    }
-
-    /**
-     * 销毁单个activity
-     *
-     * @param cls 需要销毁的Activity Name
-     */
-    public void finishActivity(Class<?> cls) {
-        if (mActivityStack == null) {
-            return;
-        }
-        AppCompatActivity closeActivity = null;
-        for (int i = 0, size = mActivityStack.size(); i < size; i++) {
-            if (mActivityStack.get(i).getClass().equals(cls)) {
-                closeActivity = mActivityStack.get(i);
-                break;
-            }
-
-        }
-        finishActivity(closeActivity);
-    }
-
-    /**
-     * 从栈中移除某个Activity
-     */
-    public void removeActivity(AppCompatActivity activity) {
-        if (activity == null) {
-            return;
-        }
-        if (mActivityStack == null) {
-            return;
-        }
-        mActivityStack.remove(activity);
-    }
-
-    /**
-     * 退出栈中所有Activity,到指定的activity截止
-     *
-     * @param cls Activity
-     */
-    public void finishAllActivityExceptOne(Class cls) {
-        //先循环找出来
-        AppCompatActivity activityExceptOne = null;
-        for (int i = 0; i < mActivityStack.size(); i++) {
-            AppCompatActivity activity = mActivityStack.get(i);
-            if (activity.getClass().getName().endsWith(cls.getName())) {
-                activityExceptOne = activity;
+    private fun snapshot(): List<AppCompatActivity> {
+        requireMainThread()
+        val live = ArrayList<AppCompatActivity>(activities.size)
+        val iterator = activities.iterator()
+        while (iterator.hasNext()) {
+            val activity = iterator.next().get()
+            if (activity == null || activity.isFinishing || activity.isDestroyed) {
+                iterator.remove()
             } else {
-                activity.finish();
+                live.add(activity)
             }
         }
-
-        if (activityExceptOne != null) {
-            mActivityStack.clear();
-            mActivityStack.add(activityExceptOne);
-        }
+        return live
     }
 
-    /**
-     * 退出栈中所有Activity,到指定的activity截止
-     *
-     * @param activity Activity
-     */
-    public void finishAllActivityExceptOne(AppCompatActivity activity) {
-        //先循环找出来
-        AppCompatActivity activityExceptOne = null;
-        for (int i = 0; i < mActivityStack.size(); i++) {
-            AppCompatActivity activityStack = mActivityStack.get(i);
-            if (activityStack == activity) {
-                activityExceptOne = activity;
-            } else {
-                activityStack.finish();
-            }
-        }
-
-        if (activityExceptOne != null) {
-            mActivityStack.clear();
-            mActivityStack.add(activityExceptOne);
-        }
+    fun addActivity(activity: AppCompatActivity?) {
+        val live = snapshot()
+        if (activity == null || activity.isFinishing || activity.isDestroyed) return
+        if (live.none { it === activity }) activities.add(WeakReference(activity))
     }
 
-
-    /**
-     * 判断是否存在某个 activity
-     * @param cls activity
-     */
-    public boolean haveActivity(Class cls){
-        for (AppCompatActivity activity:mActivityStack) {
-            String name1 = activity.getClass().getName();
-            String name2 = cls.getName();
-            if(name1.equals(name2)){
-                return true;
-            }
-        }
-
-        return false;
+    /** Call from onResume when manually integrating an activity outside XBaseBindingActivity. */
+    fun markActivityResumed(activity: AppCompatActivity?) {
+        removeActivity(activity)
+        addActivity(activity)
     }
 
-    /**
-     * 退出栈中所有的activity
-     */
-    public void finishAllActivity() {
-        for (int i = 0; i < mActivityStack.size(); i++) {
-            if (null != mActivityStack.get(i)) {
-                mActivityStack.get(i).finish();
-            }
-        }
-        mActivityStack.clear();
+    fun currentActivity(): AppCompatActivity? = snapshot().lastOrNull()
+
+    fun removeActivity(activity: AppCompatActivity?) {
+        snapshot()
+        activities.removeAll { it.get() === activity }
     }
 
-    /**
-     * 获取指定的activity
-     *
-     * @param cls Activity Name
-     * @return
-     */
-    public AppCompatActivity getActivityByClass(Class cls) {
-        if (mActivityStack == null) {
-            return null;
-        }
-        for (int i = 0; i < mActivityStack.size(); i++) {
-            if (null != mActivityStack.get(i)) {
-                AppCompatActivity activity = mActivityStack.get(i);
-                String name1 = activity.getClass().getName();
-                String name2 = cls.getName();
-                if (name1.equals(name2)) {
-                    return activity;
-                }
-            }
-        }
-        return null;
+    fun finishActivity(activity: AppCompatActivity?) {
+        removeActivity(activity)
+        if (activity != null && !activity.isFinishing && !activity.isDestroyed) activity.finish()
     }
 
-
-    /**
-     * 判断当前的activity是当前的运行
-     *
-     * @param cls Activity名字
-     * @return boolean
-     */
-    public boolean isCurrentActivity(Class cls) {
-        String name1 = currentActivity().getClass().getName();
-        String name2 = cls.getName();
-        return name1.endsWith(name2);
+    /** Preserves the old behavior: finish the first matching registered instance. */
+    fun finishActivity(cls: Class<*>) {
+        finishActivity(getActivityByClass(cls))
     }
 
-    /**
-     * 动画打开Activity
-     *
-     * @param context
-     * @param intent
-     */
-    public static void startActivityRtl(Context context, Intent intent) {
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context, R.anim.activity_slide_right_in, R.anim.activity_slide_left_out);
-        context.startActivity(intent, options.toBundle());
+    /** Retain only the most recent instance of this exact class; finish all if absent. */
+    fun finishAllActivityExceptOne(cls: Class<*>) {
+        val live = snapshot()
+        finishSnapshot(live, live.lastOrNull { it.javaClass == cls })
+    }
+
+    fun finishAllActivityExceptOne(activity: AppCompatActivity?) {
+        val live = snapshot()
+        finishSnapshot(live, live.firstOrNull { it === activity })
+    }
+
+    fun haveActivity(cls: Class<*>): Boolean = getActivityByClass(cls) != null
+
+    fun finishAllActivity() = finishSnapshot(snapshot(), null)
+
+    fun getActivityByClass(cls: Class<*>): AppCompatActivity? =
+        snapshot().firstOrNull { it.javaClass == cls }
+
+    fun isCurrentActivity(cls: Class<*>): Boolean = currentActivity()?.javaClass == cls
+
+    private fun finishSnapshot(live: List<AppCompatActivity>, retained: AppCompatActivity?) {
+        // Update first: finish callbacks may synchronously remove activities or add new ones.
+        activities.clear()
+        retained?.let { activities.add(WeakReference(it)) }
+        live.forEach {
+            if (it !== retained && !it.isFinishing && !it.isDestroyed) it.finish()
+        }
     }
 }

@@ -158,10 +158,4 @@
         <!-- 添加循环属性 -->
         <attr name="isCircular" format="boolean" />
     </declare-styleable>
-
-    <declare-styleable name="Horizontal2PickerView">
-        <attr name="pv_textColor" format="color|reference"/>
-        <attr name="pv_selectedTextColor" format="color|reference"/>
-        <attr name="pv_textSize" format="dimension"/>
-    </declare-styleable>
 </resources>

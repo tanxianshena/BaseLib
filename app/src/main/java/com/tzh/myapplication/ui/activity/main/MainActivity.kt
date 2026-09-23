@@ -33,7 +33,6 @@ import com.tzh.myapplication.utils.TimeUtil
 import com.tzh.myapplication.utils.ToastUtil
 import com.tzh.myapplication.utils.img.PermissionDetectionUtil
 import com.tzh.myapplication.utils.window.WindowUtil
-import com.tzh.baselib.activity.tool.ScanUtilActivity
 import com.tzh.baselib.activity.tool.TranslateActivity
 import com.tzh.baselib.livedata.observeForeverNoBack
 import com.tzh.baselib.util.permission.PermissionLauncher
@@ -65,6 +64,7 @@ class MainActivity : AppBaseActivity<ActivityMainBinding>(R.layout.activity_main
 
     override fun initView() {
         binding.v = this
+        binding.pickerView.setData(listOf("推荐", "热门", "最新", "收藏", "全部"))
 
         curSelDate = TimeUtil.getCurrentDate()
 
@@ -128,21 +128,6 @@ class MainActivity : AppBaseActivity<ActivityMainBinding>(R.layout.activity_main
     }
 
     /**
-     * 扫码
-     */
-    fun scannerCode(){
-        ScanUtilActivity.start(this@MainActivity,object : ScanUtilActivity.ScanListener{
-            override fun sure(text: String) {
-                ToastUtil.show(text)
-            }
-
-            override fun cancel() {
-                ToastUtil.show("取消")
-            }
-        })
-    }
-
-    /**
      * 翻译
      */
     fun translate(){
@@ -173,20 +158,6 @@ class MainActivity : AppBaseActivity<ActivityMainBinding>(R.layout.activity_main
                 }, SelectMimeType.ofImage())
             }
         })
-    }
-
-    /**
-     * 木鱼
-     */
-    fun muYu(){
-
-    }
-
-    /**
-     * 添加一条短信
-     */
-    fun addMessage(){
-
     }
 
     /**

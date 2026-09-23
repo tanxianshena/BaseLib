@@ -34,7 +34,8 @@ object PermissionDetectionUtil {
     }
 
     fun getPermission(listener : DetectionListener){
-        PermissionXUtil.requestAnyPermission(XAppActivityManager.getInstance().currentActivity(),ChoiceImageUtil.getPhotoPermissions(),object : OnPermissionCallBackListener {
+        val activity = XAppActivityManager.getInstance().currentActivity() ?: return
+        PermissionXUtil.requestAnyPermission(activity,ChoiceImageUtil.getPhotoPermissions(),object : OnPermissionCallBackListener {
             override fun onAgree() {
                 listener.ok()
             }
