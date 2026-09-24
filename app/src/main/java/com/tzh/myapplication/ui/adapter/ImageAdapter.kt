@@ -14,7 +14,7 @@ class ImageAdapter : XRvBindingPureDataAdapter<String>(R.layout.adapter_image) {
             LoadImageUtil.loadImageUrl(this.ivImage,data,10f)
 
             this.ivImage.setOnClickListener {
-                PhotoViewActivity.start(XAppActivityManager.getInstance().currentActivity()!!,ivImage, listData as ArrayList<String>,position)
+                PhotoViewActivity.start(XAppActivityManager.getInstance().currentActivity()!!,ivImage, listData,position)
             }
         }
     }

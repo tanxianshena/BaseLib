@@ -145,6 +145,9 @@ class PhotoViewActivity :
         }
         val initial = (restoredPosition ?: intent.getIntExtra(POSITION, 0)).coerceIn(mList.indices)
         currentPosition = initial
+        binding.banner.isAutoLoop(false)
+        binding.banner.setIntercept(false)
+        binding.banner.viewPager2.isUserInputEnabled = true
         binding.banner.setAdapter(mAdapter)
         binding.banner.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(
@@ -194,6 +197,11 @@ class PhotoViewActivity :
                 if (moved(event.getHistoricalX(i), event.getHistoricalY(i))) gestureMoved = true
             }
             if (event.eventTime - event.downTime > ViewConfiguration.getLongPressTimeout()) gestureMoved = true
+        }
+        // A drag should immediately reveal the interactive page beneath the entry overlay.
+        if (gestureMoved && entering && intent.hasExtra(SHARED_IMAGE)) {
+            releaseEnter(sharedReady)
+            finishEntering()
         }
         dispatchingTouch = true
         return try { super.dispatchTouchEvent(event) } finally { dispatchingTouch = false }
@@ -280,11 +288,13 @@ class PhotoViewActivity :
         Glide.with(this).load(mList[origin]).dontAnimate().into(object : DrawableImageViewTarget(image) {
             override fun onResourceReady(resource: Drawable, transition: GlideTransition<in Drawable>?) {
                 super.onResourceReady(resource, transition)
-                image.doOnPreDraw { releaseEnter(true) }
+                if (entering) image.doOnPreDraw { releaseEnter(true) }
+                else sharedReady = true
             }
             override fun onLoadFailed(errorDrawable: Drawable?) {
                 super.onLoadFailed(errorDrawable)
-                image.doOnPreDraw { releaseEnter(false) }
+                if (entering) image.doOnPreDraw { releaseEnter(false) }
+                else sharedReady = false
             }
         })
     }
@@ -305,10 +315,19 @@ class PhotoViewActivity :
         if (!entering) return
         entering = false
         mainHandler.removeCallbacks(enterCleanup)
-        sharedImage?.visibility = View.INVISIBLE
+        detachSharedImage()
         if (closing) closeWithTransition()
     }
 
+    private fun detachSharedImage() {
+        // Transition machinery may restore visibility after our end callback.
+        // Detach instead of hiding, so a static preview cannot cover the interactive pager.
+        sharedImage?.let { image ->
+            image.visibility = View.INVISIBLE
+            (image.parent as? ViewGroup)?.removeView(image)
+        }
+        binding.banner.visibility = View.VISIBLE
+    }
     private fun closePreview() {
         if (closing || isFinishing || isDestroyed) return
         closing = true
@@ -327,6 +346,10 @@ class PhotoViewActivity :
         val image = sharedImage
         if (sharedReady && image != null) {
             // This first version always shrinks back to the originally clicked image.
+            if (image.parent == null) {
+                (binding.banner.parent as ViewGroup).addView(image, 1,
+                    ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            }
             binding.banner.visibility = View.INVISIBLE
             image.visibility = View.VISIBLE
             image.doOnPreDraw { finishAfterTransition() }

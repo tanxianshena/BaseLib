@@ -29,10 +29,13 @@ class ImageActivity : AppBaseActivity<ActivityImageBinding>(R.layout.activity_im
         binding.recyclerView.grid(4).initAdapter(mAdapter).gradDivider(15f,4)
         mAdapter.setDatas(mutableListOf<String>().apply {
             add("https://oss.corpsoft.cn/messenger/20260822161557627336.jpg")
+            add("https://oss.corpsoft.cn/messenger/20260822161601360716.jpg")
             add("https://oss.corpsoft.cn/messenger/20260822161557627336.jpg")
+            add("https://oss.corpsoft.cn/messenger/20260822161601360716.jpg")
             add("https://oss.corpsoft.cn/messenger/20260822161557627336.jpg")
+            add("https://oss.corpsoft.cn/messenger/20260822161601360716.jpg")
             add("https://oss.corpsoft.cn/messenger/20260822161557627336.jpg")
-            add("https://oss.corpsoft.cn/messenger/20260822161557627336.jpg")
+            add("https://oss.corpsoft.cn/messenger/20260822161601360716.jpg")
             add("https://oss.corpsoft.cn/messenger/20260822161557627336.jpg")
         })
     }
