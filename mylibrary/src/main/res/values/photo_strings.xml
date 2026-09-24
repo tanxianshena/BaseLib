@@ -3,6 +3,8 @@
     <string name="photo_save_image">保存图片到相册</string>
     <style name="BaseLibPhotoPreviewTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
 </resources>

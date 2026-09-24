@@ -13,6 +13,12 @@ import android.transition.TransitionSet
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.MotionEvent
+import android.view.ViewConfiguration
+import android.view.WindowManager
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.doOnPreDraw
@@ -27,6 +33,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.FutureTarget
 import com.tzh.baselib.R
@@ -54,12 +61,12 @@ class PhotoViewActivity :
          * Keep the source view attached and its transitionName stable until return.
          */
         @JvmStatic
-        fun start(activity: Activity, sourceView: ImageView, url: String) =
-            start(activity, sourceView, arrayListOf(url), 0)
+        fun start(activity: AppCompatActivity, sourceView: ImageView, url: String) =
+            start(activity, sourceView, mutableListOf(url), 0)
 
         @JvmStatic
         @JvmOverloads
-        fun start(activity: Activity, sourceView: ImageView, imageList: ArrayList<String>, position: Int = 0) {
+        fun start(activity: AppCompatActivity, sourceView: ImageView, imageList: MutableList<String>, position: Int = 0) {
             if (activity.isFinishing || activity.isDestroyed) return
             if (imageList.isEmpty() || !sourceView.isAttachedToWindow || !sourceView.isShown
                 || sourceView.width == 0 || sourceView.height == 0 || sourceView.drawable == null
@@ -83,7 +90,7 @@ class PhotoViewActivity :
 
         @JvmStatic
         @JvmOverloads
-        fun start(context: Context, imageList: ArrayList<String>, position: Int? = null) {
+        fun start(context: Context, imageList: MutableList<String>, position: Int? = null) {
             var host = context
             while (host is ContextWrapper && host !is Activity) {
                 val next = host.baseContext
@@ -110,9 +117,10 @@ class PhotoViewActivity :
     private var downloadTarget: FutureTarget<File>? = null
 
     val mList: List<String> by lazy { intent.getStringArrayListExtra(IMAGES)?.toList().orEmpty() }
-    val mAdapter by lazy { BannerImageAdapter(mList) { closePreview() } }
+    val mAdapter by lazy { BannerImageAdapter(mList) { closeFromImageTap() } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.BaseLibPhotoPreviewTheme)
         restoredPosition = savedInstanceState?.getInt(SAVED_POSITION)
         if (intent.hasExtra(SHARED_IMAGE)) {
             window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
@@ -121,6 +129,7 @@ class PhotoViewActivity :
             mainHandler.postDelayed(enterTimeout, 2500)
         }
         super.onCreate(savedInstanceState)
+        applyImmersiveMode()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() { closePreview() }
         })
@@ -144,7 +153,9 @@ class PhotoViewActivity :
                 positionOffsetPixels: Int
             ) = Unit
 
-            override fun onPageScrollStateChanged(state: Int) = Unit
+            override fun onPageScrollStateChanged(state: Int) {
+                pagerMoving = state != 0
+            }
             override fun onPageSelected(position: Int) {
                 if (position in mList.indices) {
                     currentPosition = position
@@ -159,6 +170,58 @@ class PhotoViewActivity :
         if (intent.hasExtra(SHARED_IMAGE)) prepareSharedImage()
     }
 
+    private var pagerMoving = false
+    private var dispatchingTouch = false
+    private var gestureMoved = false
+    private var downX = 0f
+    private var downY = 0f
+    private val touchSlop by lazy { ViewConfiguration.get(this).scaledTouchSlop.toFloat() }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                downX = event.x
+                downY = event.y
+                gestureMoved = false
+            }
+            MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_CANCEL -> gestureMoved = true
+        }
+        if (event.actionMasked == MotionEvent.ACTION_MOVE || event.actionMasked == MotionEvent.ACTION_UP) {
+            fun moved(x: Float, y: Float) =
+                kotlin.math.abs(x - downX) > touchSlop || kotlin.math.abs(y - downY) > touchSlop
+            if (moved(event.x, event.y)) gestureMoved = true
+            for (i in 0 until event.historySize) {
+                if (moved(event.getHistoricalX(i), event.getHistoricalY(i))) gestureMoved = true
+            }
+            if (event.eventTime - event.downTime > ViewConfiguration.getLongPressTimeout()) gestureMoved = true
+        }
+        dispatchingTouch = true
+        return try { super.dispatchTouchEvent(event) } finally { dispatchingTouch = false }
+    }
+
+    private fun closeFromImageTap() {
+        if (pagerMoving || (dispatchingTouch && gestureMoved)) return
+        closePreview()
+    }
+
+    private fun applyImmersiveMode() {
+        supportActionBar?.hide()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes = window.attributes.apply {
+                layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+        }
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            hide(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && !closing) applyImmersiveMode()
+    }
     private var sharedImage: ImageView? = null
     private var sharedReady = false
     private var entering = true
@@ -206,7 +269,9 @@ class PhotoViewActivity :
             scaleType = ImageView.ScaleType.FIT_CENTER
             transitionName = intent.getStringExtra(SHARED_IMAGE)
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            setOnClickListener { closePreview() }
+            // Transition decoration must never consume the pager's swipe gestures.
+            isClickable = false
+            isFocusable = false
         }
         sharedImage = image
         (binding.banner.parent as ViewGroup).addView(image, 1,

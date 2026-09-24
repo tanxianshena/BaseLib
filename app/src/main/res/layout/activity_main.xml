@@ -60,11 +60,11 @@
         <com.tzh.baselib.shapeview.ShapeTextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
             android:text="toImage"
             app:shapeCorners="20dp"
             android:gravity="center"
-            android:visibility="gone"
             app:shapeBackgroundColor="@color/color_00f3b8"
             app:shapeBorderColor="@color/color_333"
             app:shapeBorderWidth="1dp"
